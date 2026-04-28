@@ -1,2 +1,3 @@
-Three sum-Medium
-Two sum-Easy
+five sum-easy
+two sum -easy
+three sum-med
