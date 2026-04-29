@@ -1,33 +1,12 @@
 #include <iostream>
 #include<string>
 #include<fstream>
+#include "tracker.h"
 
 using std::string,std::cout,std::cin,std::endl;
 
-//defining all the functions
-void addProblem(string name,string tag);
-void ramLogChecker();
-void undoLast();
-void fileSaver();
-void addProblemHelperFunction();
-void welcomeMenu();
-void displayFromFile();
-void loadFromFile();
-void logCheckerHelperFunction();
 
 
-struct Node{
-    string problem;
-    string difficulty;
-    Node* next;
-    Node* prev;
-
-    Node(string problem , string difficulty){
-        this->problem = problem;
-        this->difficulty = difficulty;
-        next = prev = NULL;
-    }
-};
 
 Node* head = nullptr;
 Node* tail = nullptr;
@@ -207,9 +186,3 @@ void logCheckerHelperFunction(){
     }
 }
 
-int main() {
-    loadFromFile();
-    welcomeMenu();
-
-    return 0;
-}

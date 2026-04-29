@@ -1,3 +1,4 @@
-five sum-easy
-two sum -easy
+two sum -hard
 three sum-med
+two sum -easy
+five sum-easy
