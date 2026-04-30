@@ -1,6 +1,7 @@
 #include <iostream>
 #include<string>
 #include<fstream>
+#include<algorithm>
 #include "tracker.h"
 
 using std::string,std::cout,std::cin,std::endl;
@@ -90,6 +91,8 @@ void addProblemHelperFunction(){
 void welcomeMenu(){
     int choice;
     do{
+        cout<<endl;
+        cout<<endl;
         cout<<"welcome to Log Manager"<<endl;
         cout<<"---Choose from the Menu---"<<endl;
         cout<<"1.Add problem"<<endl;
@@ -97,11 +100,13 @@ void welcomeMenu(){
         cout<<"3.Check the log"<<endl;
         cout<<"4.Save to File"<<endl;
         cout<<"5.Return"<<endl;
+        cout<<"6.search a problem"<<endl;
+        cout<<"7.view status"<<endl;
 
        
         cin>>choice;
 
-        if(choice<1 || choice>5){
+        if(choice<1 || choice>7){
             std::cerr<<"Error invalid input"<<endl;
             cin.clear();
             cin.ignore(1000,'\n');
@@ -122,7 +127,13 @@ void welcomeMenu(){
                 fileSaver();
                 cout<<"file saved"<<endl;
                 break;
-            
+            case 6:{
+                searchProblemHelper();
+                break;
+            }
+            case 7:
+                showStatus();
+                break;
         }
     }while(choice != 5);
 }
@@ -186,3 +197,65 @@ void logCheckerHelperFunction(){
     }
 }
 
+
+void showStatus(){
+    int countEasy = 0 , countMedium = 0 , countHard = 0;
+    Node* temp = head; 
+    while(temp != NULL){
+        string lowerDifficulty = toLowerCase(temp->difficulty);
+        if(lowerDifficulty == "easy"){
+            countEasy++;
+        }else if(lowerDifficulty == "medium"){
+            countMedium++;
+        }else if(lowerDifficulty == "hard"){
+            countHard++;
+        }
+        temp = temp->next;
+    }
+
+    cout<<"Easy Problem Solved ="<<countEasy<<endl;
+    cout<<"Medium Problem Solved ="<<countMedium<<endl;
+    cout<<"Hard Problem Solved ="<<countHard<<endl;
+
+    return;
+
+} 
+
+void searchProblemHelper(){
+    string query;
+    cout<<"enter your problem or difficulty"<<endl;
+    cin.ignore();
+    std::getline(cin , query);
+    if(query==""){
+        cout<<"invalid input"<<endl;
+        return;
+    }
+    searchProblem(query);
+    return;
+}
+
+string toLowerCase(string s){
+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return std::tolower(c);});
+    return s;
+}
+
+void searchProblem(string query){
+    Node* temp = head;
+    bool isPresent = false;
+    string lowerQuery = toLowerCase(query);
+    while(temp != NULL){
+        string lowerTempProblem = toLowerCase(temp->problem);
+        string lowerTempDiff = toLowerCase(temp->difficulty);
+        if((lowerTempProblem.find(lowerQuery) != string::npos) || (lowerTempDiff.find(lowerQuery) != string::npos)){
+            cout<<temp->problem<<"-"<<temp->difficulty<<endl;
+            isPresent = true;
+        }
+        temp = temp->next;
+    }
+
+    if(isPresent == false){
+        cout<<"problem not found"<<endl;
+    }
+    
+    return;
+}

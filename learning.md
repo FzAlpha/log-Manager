@@ -35,3 +35,23 @@ Refactored the monolithic code into a standard C++ multi-file architecture:
 **Compilation Command Upgraded:**
 Shifted from single-file execution to multi-file linking:
 `g++ main.cpp tracker.cpp -o manager`
+
+---
+## Date: 30 April 2026
+### Log 2: Smart Search Engine & Analytics Dashboard
+
+**The Problem:** As the log size grows, finding specific problems manually becomes impossible. Needed a way to query problems case-insensitively and track overall CP progress, all without relying on external databases to keep the tool lightweight and portable.
+
+**The Solution:**
+1. **Search Engine (`searchProblem`):** Implemented an in-memory linear search traversing the doubly linked list. Used string manipulation to allow partial and case-insensitive matching.
+2. **Analytics Dashboard (`showStatus`):** Built a traversal counter to aggregate total problems solved and categorize them by difficulty (Easy, Medium, Hard).
+3. **Separation of Concerns:** Abstracted the input handling into a `searchProblemHelper()` to keep the main switch-case clean.
+
+**Key Traps Handled (The "Aha!" Moments):**
+* **The "Exact Match" Trap:** Replaced the `==` operator with C++ `std::string::find()` to allow partial substring matching (e.g., typing "sum" finds "Two Sum").
+* **Case-Insensitivity & Lambdas:** Wrote a robust `toLowerCase` helper function using `std::transform` and a lambda function `[](unsigned char c){ return std::tolower(c); }` to normalize strings before comparing.
+* **The Logical Flow (`&&` vs `||`):** Initially used `&&` which required the query to be in BOTH the problem name and difficulty. Fixed this by switching to `||` (OR) to allow flexible searching.
+* **State Management (The Flag Logic):** Used a boolean flag (`isPresent`) to track if a match was found during the entire list traversal, preventing premature exits and ensuring the "not found" message only triggers after checking every node.
+* **The Empty String Bug:** Discovered that an empty `getline` input `""` matches everything when using `.find()`, causing the entire log to print. Added an explicit `if(query == "")` check to block invalid empty searches.
+* **Directory Path Glitch:** Handled terminal execution errors (`CommandNotFoundException`) by realizing the compiler needs to be in the exact working directory (`cd log-Manager`) to link multiple files correctly.
+*

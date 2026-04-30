@@ -1,4 +1,4 @@
 two sum -hard
-three sum-med
+three sum-medium
 two sum -easy
 five sum-easy

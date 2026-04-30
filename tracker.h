@@ -12,6 +12,10 @@ void welcomeMenu();
 void displayFromFile();
 void loadFromFile();
 void logCheckerHelperFunction();
+void searchProblem(std::string query);
+void showStatus();
+std::string toLowerCase(std::string s);
+void searchProblemHelper();
 
 struct Node{
     std::string problem;
