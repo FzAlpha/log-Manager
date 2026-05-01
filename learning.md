@@ -55,3 +55,26 @@ Shifted from single-file execution to multi-file linking:
 * **The Empty String Bug:** Discovered that an empty `getline` input `""` matches everything when using `.find()`, causing the entire log to print. Added an explicit `if(query == "")` check to block invalid empty searches.
 * **Directory Path Glitch:** Handled terminal execution errors (`CommandNotFoundException`) by realizing the compiler needs to be in the exact working directory (`cd log-Manager`) to link multiple files correctly.
 *
+
+---
+## Date: 1 May 2026
+### Log 3: Smart Sniper Delete & Interactive Edit System
+
+**The Problem:** 
+Needed a way to modify existing logs (deleting specific mistakes or updating typos/difficulty) without wiping the entire list. The biggest challenge was handling "Data Collisions"—how to target one specific problem when there are multiple problems with the exact same name in the Linked List?
+
+**The Solution:**
+Built an "Interactive Conflict Resolution" engine (similar to CLI tools like Git) that powers both the **Custom Delete** and **Update** features.
+1. **Radar Scan:** Traversed the DLL to find all matches (case-insensitive).
+2. **Pointer Caching (The Core Engine):** Instead of traversing the list twice, stored the exact memory addresses of matching nodes in a `std::vector<Node*>`.
+3. **Interactive Menu:** If multiple matches are found, displayed them as a numbered list and prompted the user to select the exact node using vector indexing (`m[choice]`).
+4. **Execution (Delete/Update):** 
+   * **For Delete:** Safely relinked the `prev` and `next` pointers to bypass the targeted node, handled Edge Cases (like deleting the `head` node), and freed the memory using `delete target`.
+   * **For Update:** Directly accessed the targeted node via its pointer and modified its string attributes.
+5. **Persistence:** Saved the updated RAM data back to the hard drive (`fileSaver()`) after every operation.
+
+**Key Traps Handled (The "Aha!" Moments):**
+* **Dynamic Arrays over Raw Arrays:** Used `std::vector` and `.push_back()` for safe memory allocation to store node pointers.
+* **SegFault Prevention (Ghost Targets):** Added an explicit check (`if (matches.size() == 0)`) to prevent the code from entering the selection logic when the search yields no results, avoiding a Segmentation Fault.
+* **DLL Pointer Manipulation:** Mastered the 3-step deletion logic for Doubly Linked Lists (`target->prev->next = target->next`, etc.), ensuring the chain never breaks.
+* **Mastering the Input Buffer:** Successfully implemented `cin.ignore()` immediately after `cin >> choice` to clear the `\n` character before calling `std::getline()`, completely avoiding the empty string trap.
