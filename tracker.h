@@ -16,6 +16,10 @@ void searchProblem(std::string query);
 void showStatus();
 std::string toLowerCase(std::string s);
 void searchProblemHelper();
+void customDelete(std::string query);
+void deleteHelper();
+void updateProblem(std::string query);
+
 
 struct Node{
     std::string problem;

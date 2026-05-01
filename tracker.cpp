@@ -2,6 +2,7 @@
 #include<string>
 #include<fstream>
 #include<algorithm>
+#include<vector>
 #include "tracker.h"
 
 using std::string,std::cout,std::cin,std::endl;
@@ -92,21 +93,21 @@ void welcomeMenu(){
     int choice;
     do{
         cout<<endl;
-        cout<<endl;
         cout<<"welcome to Log Manager"<<endl;
         cout<<"---Choose from the Menu---"<<endl;
         cout<<"1.Add problem"<<endl;
-        cout<<"2.Delete last problem"<<endl;
+        cout<<"2.Delete problem"<<endl;
         cout<<"3.Check the log"<<endl;
         cout<<"4.Save to File"<<endl;
         cout<<"5.Return"<<endl;
         cout<<"6.search a problem"<<endl;
         cout<<"7.view status"<<endl;
+        cout<<"8.update a problem"<<endl;
 
        
         cin>>choice;
 
-        if(choice<1 || choice>7){
+        if(choice<1 || choice>8){
             std::cerr<<"Error invalid input"<<endl;
             cin.clear();
             cin.ignore(1000,'\n');
@@ -117,8 +118,8 @@ void welcomeMenu(){
                 addProblemHelperFunction();
                 break;
             case 2:
-                undoLast();
-                cout<<"last checkout deleted"<<endl;
+                
+                deleteHelper();
                 break;
             case 3:
                 logCheckerHelperFunction();
@@ -133,6 +134,13 @@ void welcomeMenu(){
             }
             case 7:
                 showStatus();
+                break;
+            case 8:
+                cout<<"enter the problem you want to update"<<endl;
+                string s;
+                cin.ignore();
+                std::getline(cin,s);
+                updateProblem(s);
                 break;
         }
     }while(choice != 5);
@@ -258,4 +266,124 @@ void searchProblem(string query){
     }
     
     return;
+}
+
+void customDelete(string query){
+    Node* temp = head;
+    
+    string lowerQuery = toLowerCase(query);
+    int matchCount =0;
+    std::vector<Node*> matches;
+    while(temp != NULL){
+        string lowerTempProblem = toLowerCase(temp->problem);
+        if(lowerTempProblem.find(lowerQuery) != string::npos){
+            ++matchCount;
+            matches.push_back(temp);
+        }
+        temp = temp->next;
+    }
+
+    if(matchCount == 0){
+        cout<<"problem not found"<<endl;
+        return;
+    }
+    Node* target = head;
+    if(matchCount == 1){
+        target = matches[0];
+    }else{
+        cout << matches.size() << " matches found!" << endl;
+        for(int i = 0; i < matches.size(); i++) {
+            cout << i << ". " << matches[i]->problem << " - " << matches[i]->difficulty << endl;
+        }
+        cout << "Enter the number to delete: ";
+        int choice;
+        cin >> choice; 
+        target = matches[choice];
+    }
+    if(target == head) {
+        head = target->next;
+        if(head != NULL) head->prev = NULL; 
+    }
+    else {
+        target->prev->next = target->next;
+        if(target->next != NULL) { 
+            target->next->prev = target->prev;
+        }
+    }
+    cout << "Deleted: " << target->problem << endl;
+    delete target;
+    fileSaver();
+}
+
+void deleteHelper(){
+    cout<<"please select a option from the options given"<<endl;
+    cout<<"1.delete the last"<<endl;
+    cout<<"2. custom delete"<<endl;
+    int choice;
+    cin>>choice;
+    if(choice == 1){
+        undoLast();
+        cout<<"last checkout deleted"<<endl;
+        return;
+    }else if(choice == 2){
+        string s;
+        cout<<"enter the problem you want to delete"<<endl;
+        cin.ignore();
+        std::getline(cin,s);
+        customDelete(s);
+        return;
+    }else{
+        std::cerr<<"enter valid input"<<endl;
+        return;
+    }
+}
+
+void updateProblem(string query){
+    Node* temp = head;
+    std::vector<Node*> m;
+    string lowerQuery = toLowerCase(query);
+    int i =0;
+    while(temp != NULL){
+        string lowerTempProblem = toLowerCase(temp->problem);
+        if(lowerTempProblem.find(lowerQuery) != string::npos){
+            m.push_back(temp);
+            cout<<i<<". "<<temp->problem<<"-"<<temp->difficulty<<endl;
+            i++;
+        }
+        temp = temp->next;
+    }
+    Node* target = head;
+    if(i==0){
+        cout<<"no problem found"<<endl;
+        return;
+    }
+    if(i==1){
+        target = m[0];
+    }else{
+        cout<<"enter the number of problem to update"<<endl;
+        int c;
+        cin>>c;
+        target = m[c];
+    }
+
+    cout<<"what do you want to update"<<endl;
+    cout<<"1.problem"<<endl;
+    cout<<"2.difficulty"<<endl;
+    int d;
+    cin>>d;
+    string a;
+    if(d==1){
+        cout<<"enter the updated problem"<<endl;
+        cin.ignore();
+        std::getline(cin,a);
+        target->problem = a;
+    }else if(d==2){
+        cout<<"enter the updated difficulty"<<endl;
+        cin.ignore();
+        std::getline(cin,a);
+        target->difficulty = a;
+    }
+
+    fileSaver();
+
 }
