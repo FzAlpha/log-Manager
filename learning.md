@@ -78,3 +78,22 @@ Built an "Interactive Conflict Resolution" engine (similar to CLI tools like Git
 * **SegFault Prevention (Ghost Targets):** Added an explicit check (`if (matches.size() == 0)`) to prevent the code from entering the selection logic when the search yields no results, avoiding a Segmentation Fault.
 * **DLL Pointer Manipulation:** Mastered the 3-step deletion logic for Doubly Linked Lists (`target->prev->next = target->next`, etc.), ensuring the chain never breaks.
 * **Mastering the Input Buffer:** Successfully implemented `cin.ignore()` immediately after `cin >> choice` to clear the `\n` character before calling `std::getline()`, completely avoiding the empty string trap.
+
+---
+## Date: 2 May 2026
+### Log 4: In-Place Merge Sort on Doubly Linked List & System Architecture
+
+**The Problem:** Needed a way to sort logged problems logically by difficulty (Easy -> Medium -> Hard) rather than alphabetically. The challenge was to do this entirely in-place within the Doubly Linked List, without using auxiliary space like Vectors or Arrays, while keeping the `next` and `prev` pointers intact.
+
+**The Solution:**
+Built an $O(N \log N)$ Merge Sort algorithm custom-designed for Doubly Linked Lists.
+1. **The Weightage System:** Created `getProblemDifficultyWeight()` to assign numerical values to strings (Easy=1, Medium=2, Hard=3) for logical comparison during the merge phase.
+2. **The Splitter (Tortoise and Hare):** Implemented a fast/slow pointer approach to accurately find the middle of the DLL and sever the connections cleanly.
+3. **The Recursive Merge:** Handled complex recursive linking to stitch the two sorted halves back together, carefully relinking both `next` and `prev` pointers for every node to ensure the chain never breaks.
+4. **Header Architecture Refactoring:** Solved a critical compilation issue by moving the `struct Node` blueprint to the top of `tracker.h`, ensuring all `.cpp` files understand the custom data type before function declarations.
+
+**Key Traps Handled (The "Aha!" Moments):**
+* **The "LowerCase" Illusion:** Realized that case-insensitivity requires comparing the normalized string, not the original raw string.
+* **The Comma Operator Trap:** Discovered that C++ interprets `return (head, second)` using the comma operator (ignoring the left value and returning the right), completely bypassing the merge step. Replaced with a proper `return merge(head, second)`.
+* **The "Undeclared Type" Header Trap:** Learned that the C++ compiler reads files top-to-bottom. If a function returns a `Node*`, the compiler must see the definition of `Node` earlier in the same header file.
+* **Mastering Pointers:** Solidified the mental model of recursive DLL pointer manipulation—the ultimate test of avoiding Segmentation Faults and infinite loops.

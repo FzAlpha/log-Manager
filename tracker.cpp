@@ -103,11 +103,12 @@ void welcomeMenu(){
         cout<<"6.search a problem"<<endl;
         cout<<"7.view status"<<endl;
         cout<<"8.update a problem"<<endl;
+        cout<<"9.save according to order"<<endl;
 
        
         cin>>choice;
 
-        if(choice<1 || choice>8){
+        if(choice<1 || choice>9){
             std::cerr<<"Error invalid input"<<endl;
             cin.clear();
             cin.ignore(1000,'\n');
@@ -135,12 +136,17 @@ void welcomeMenu(){
             case 7:
                 showStatus();
                 break;
-            case 8:
+            case 8:{
                 cout<<"enter the problem you want to update"<<endl;
                 string s;
                 cin.ignore();
                 std::getline(cin,s);
                 updateProblem(s);
+                break;
+            }
+            case 9:
+                head = sortProblems(head);
+                fileSaver();
                 break;
         }
     }while(choice != 5);
@@ -387,3 +393,60 @@ void updateProblem(string query){
     fileSaver();
 
 }
+
+int getProblemDifficultyWeight(string diff){
+    string lowerDiff = toLowerCase(diff);
+    if(lowerDiff == "easy"){
+        return 1;
+    }else if(lowerDiff == "medium"){
+        return 2;
+    }else if(lowerDiff == "hard"){
+        return 3;
+    }
+    return -1;
+}
+//Merge sorting algorithms
+Node* sortProblems(Node* head){
+    if(!head || !head->next){
+        return head;
+    }
+    Node* second = split(head);
+
+    head = sortProblems(head);
+    second = sortProblems(second);
+
+    return merge(head , second);
+}
+
+Node* split(Node* head){
+    Node* fast = head , *slow = head;
+    while (fast->next && fast->next->next) {
+        fast = fast->next->next;
+        slow = slow->next;
+    }
+    Node* temp = slow->next;
+    slow->next = nullptr;
+   
+    if (temp) {
+        temp->prev = nullptr;
+    }
+    return temp;
+}
+
+Node* merge(Node* first, Node* second){
+    if (!first) return second;
+    if (!second) return first;
+
+    if (getProblemDifficultyWeight(first->difficulty) <= getProblemDifficultyWeight(second->difficulty)) {
+        first->next = merge(first->next, second);
+        if (first->next) first->next->prev = first;
+        first->prev = nullptr;
+        return first;
+    } else {
+        second->next = merge(first, second->next);
+        if (second->next) second->next->prev = second;
+        second->prev = nullptr;
+        return second;
+    }
+}
+

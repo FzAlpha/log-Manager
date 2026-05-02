@@ -19,6 +19,8 @@ void searchProblemHelper();
 void customDelete(std::string query);
 void deleteHelper();
 void updateProblem(std::string query);
+int getProblemDifficultyWeight(std::string diff);
+
 
 
 struct Node{
@@ -36,4 +38,7 @@ struct Node{
 
 extern Node* head;
 extern Node* tail;
+Node* sortProblems(Node* head);
+Node* split(Node* head);
+Node* merge(Node* first, Node* second);
 #endif
