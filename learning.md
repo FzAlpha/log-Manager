@@ -97,3 +97,37 @@ Built an $O(N \log N)$ Merge Sort algorithm custom-designed for Doubly Linked Li
 * **The Comma Operator Trap:** Discovered that C++ interprets `return (head, second)` using the comma operator (ignoring the left value and returning the right), completely bypassing the merge step. Replaced with a proper `return merge(head, second)`.
 * **The "Undeclared Type" Header Trap:** Learned that the C++ compiler reads files top-to-bottom. If a function returns a `Node*`, the compiler must see the definition of `Node` earlier in the same header file.
 * **Mastering Pointers:** Solidified the mental model of recursive DLL pointer manipulation—the ultimate test of avoiding Segmentation Faults and infinite loops.
+
+## Date: 3 May 2026
+**Project:** Log Manager (DSA Tracker)
+**Phase:** 3 - Persistence, Time-Stamping & System Integration
+
+### 1. The "Time Traveler" Bug & Constructor Overloading
+* **Concept:** When adding a timestamp feature, a single constructor fetching `time(nullptr)` works for *new* problems but overwrites historical dates when loading from a saved file.
+* **Solution:** Mastered **Constructor Overloading**. Created two separate constructors in `struct Node`:
+  * One for new problems: Generates a fresh timestamp.
+  * One for loading files: Accepts a `time_t` parameter to preserve the historical timestamp.
+
+### 2. Time Management in C++ (`<ctime>`)
+* **`time_t` vs `std::tm`:** Learned that storing time as a simple integer (`time_t` - Unix timestamp) is highly efficient for Hard Drive storage and linked list node memory.
+* **Reverse Engineering Time:** Used `std::localtime()` to convert the raw `time_t` integer back into a human-readable `std::tm` structure.
+* **Formatting:** Successfully extracted `tm_mday`, `tm_mon` (needs +1), and `tm_year` (needs +1900) to format dates beautifully in the console.
+
+### 3. Advanced File Parsing & Data Extraction
+* **The Delimiter Strategy:** Upgraded the file saving mechanism to use specific symbols (`-` and `|`) to separate data columns (Problem, Difficulty, Time).
+* **String Manipulation:** Utilized `std::getline()`, `line.find()`, and `line.substr()` to slice a single text file line into discrete variables.
+* **String to Integer:** Used `std::stoll()` to successfully parse the extracted timestamp string back into a `time_t` long integer format.
+
+### 4. The "Invisible Space" Trap (Silent Logic Killers)
+* **Concept:** In C++, `"easy"` and `" easy "` are completely different strings.
+* **Impact:** A single stray space in the `fileSaver()` function completely broke the `getProblemDifficultyWeight` logic, causing the Merge Sort to fail silently because strings didn't match.
+* **Takeaway:** Data formatting consistency in File I/O is just as critical as the algorithm itself. Always sanitize/trim strings or meticulously format the save files.
+
+### 5. Multi-File Compilation & The Linker
+* **Concept:** Transitioned from a single monolithic file to a modular `.h` and `.cpp` architecture.
+* **The Trap:** Running `g++ main.cpp` results in an `ld returned 1 exit status` (Linker Error) because the compiler doesn't know where the function definitions are.
+* **Solution:** Learned to compile the entire project using `g++ *.cpp -o main` to link the data layer, logic layer, and presentation layer together into a single executable.
+
+### 6. Linked List Edge Cases (Circular Lists & Lost Tails)
+* **Circular Bug:** Realized that `tail->next = head` accidentally creates a Circular Linked List, causing infinite loops during display/traversal. Fixed by ensuring `tail->next` points to the `newNode`.
+* **The Lost Tail:** Learned that after running complex algorithms like Merge Sort, the `tail` pointer must be manually re-traversed and reassigned, otherwise subsequent appends will corrupt the list structure.

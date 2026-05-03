@@ -3,6 +3,7 @@
 #include<fstream>
 #include<algorithm>
 #include<vector>
+#include<ctime>
 #include "tracker.h"
 
 using std::string,std::cout,std::cin,std::endl;
@@ -24,6 +25,18 @@ void addProblem(string name,string tag){
     }
 }
 
+void addProblemFile(string name,string tag , time_t savedTime){
+    Node* newNode = new Node(name,tag , savedTime);
+    if(head == NULL){
+        head = tail = newNode;
+    }else{
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
+    }
+}
+
+
 //prints the linked list
 void ramLogChecker(){
     if(head == NULL){
@@ -32,7 +45,10 @@ void ramLogChecker(){
     }
     Node* temp = head; 
     while(temp != NULL){
-        std::cout<<temp->problem<<"-"<<temp->difficulty<<std::endl;
+        struct tm* timeinfo = std::localtime(&temp->date);
+        char datebuffer[26];
+        std::strftime(datebuffer , sizeof(datebuffer) , "%b %d %H:%M" , timeinfo);
+        std::cout<<temp->problem<<"-"<<temp->difficulty<<" | Added on = "<<datebuffer<<"\n";
         temp = temp->next;
     }
     std::cout<<"log ended"<<std::endl;
@@ -67,7 +83,7 @@ void fileSaver(){
     }
     Node* temp = head;
     while(temp != NULL){
-        out<<temp->problem<<"-"<<temp->difficulty<<endl;
+        out<<temp->problem<<"-"<<temp->difficulty<< "|" << temp->date<<endl;
         temp= temp->next;
     }
     out.close();
@@ -144,32 +160,49 @@ void welcomeMenu(){
                 updateProblem(s);
                 break;
             }
-            case 9:
+            case 9:{
                 head = sortProblems(head);
+                if (head != NULL) {
+                    Node* temp = head;
+                    while (temp->next != NULL) {
+                        temp = temp->next;
+                    }
+                    tail = temp; 
+                }
                 fileSaver();
                 break;
+            }
         }
     }while(choice != 5);
 }
 
 //displays the content of the file
 void displayFromFile(){
-
     std::ifstream in("files.txt");
-
-    
     if (!in.is_open()) {
         std::cerr << "Error: Could not open the file!" << std::endl;
         return;
     }
-
     std::string line;
     while (std::getline(in, line)) {
-        
-        std::cout << line << std::endl;
+        size_t pos1 = line.find("|");
+        if(pos1 != std::string::npos){
+            
+            std::string problemData = line.substr(0, pos1); 
+            
+           
+            time_t pTime = std::stoll(line.substr(pos1+1));
+            
+            
+            std::tm *ltm = std::localtime(&pTime);
+            std::string dateStr = std::to_string(ltm->tm_mday) + "/" + 
+                                  std::to_string(1 + ltm->tm_mon) + "/" + 
+                                  std::to_string(1900 + ltm->tm_year);
+            
+            
+            std::cout << problemData << " | Added on: " << dateStr << std::endl;
+        }
     }
-
-    
     in.close();
 }
 
@@ -184,11 +217,13 @@ void loadFromFile(){
     string line;
 
     while(std::getline(in,line)){
-        size_t pos = line.find("-");
-        if(pos != string::npos){
-            string pName = line.substr(0,pos);
-            string pDiff = line.substr(pos+1);
-            addProblem(pName,pDiff);
+        size_t pos1 = line.find("-");
+        size_t pos2 = line.find("|");
+        if(pos1 != string::npos && pos2 != string::npos){
+            string pName = line.substr(0,pos1);
+            string pDiff = line.substr(pos1+1 , pos2-(pos1+1));
+            time_t pTime = std::stoll(line.substr(pos2+1));
+            addProblemFile(pName,pDiff,pTime);
         }
     }
     in.close();
@@ -261,7 +296,10 @@ void searchProblem(string query){
         string lowerTempProblem = toLowerCase(temp->problem);
         string lowerTempDiff = toLowerCase(temp->difficulty);
         if((lowerTempProblem.find(lowerQuery) != string::npos) || (lowerTempDiff.find(lowerQuery) != string::npos)){
-            cout<<temp->problem<<"-"<<temp->difficulty<<endl;
+            struct tm* timeinfo = std::localtime(&temp->date);
+            char datebuffer[26];
+            std::strftime(datebuffer , sizeof(datebuffer) , "%b %d %H:%M" , timeinfo);
+            cout<<temp->problem<<"-"<<temp->difficulty<<"| Added on ="<<datebuffer<<endl;
             isPresent = true;
         }
         temp = temp->next;
@@ -449,4 +487,6 @@ Node* merge(Node* first, Node* second){
         return second;
     }
 }
+
+
 

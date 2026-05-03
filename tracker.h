@@ -1,6 +1,7 @@
 #ifndef tracker_h
 #define tracker_h
 #include<string>
+#include<ctime>
 
 
 void addProblem(std::string name,std::string tag);
@@ -20,19 +21,28 @@ void customDelete(std::string query);
 void deleteHelper();
 void updateProblem(std::string query);
 int getProblemDifficultyWeight(std::string diff);
+void addProblemFile(std::string name,std::string tag , time_t savedTime);
 
 
 
 struct Node{
     std::string problem;
     std::string difficulty;
+    time_t date;
     Node* next;
     Node* prev;
 
     Node(std::string problem , std::string difficulty){
         this->problem = problem;
         this->difficulty = difficulty;
-        next = prev = NULL;
+        this->date = time(nullptr);
+        this->next =this-> prev = nullptr;
+    }
+    Node(std::string problem , std::string difficulty , time_t savedTime){
+        this->problem = problem;
+        this->difficulty = difficulty;
+        this->date = savedTime;
+        this->next =this-> prev = nullptr;
     }
 };
 

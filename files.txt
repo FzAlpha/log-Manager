@@ -1,4 +1,4 @@
-four sum-easy
-three sum-medium
-two sum -hard
-five sum-hard
+two sum-hard   |1777830112
+six sum-easy   |1777830085
+four sum-medium    |1777829983
+three sum-medium |1777831209
