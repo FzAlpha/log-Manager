@@ -1,9 +1,9 @@
 #include <iostream>
-#include<string>
+
 #include<fstream>
 #include<algorithm>
-#include<vector>
-#include<ctime>
+
+
 #include "tracker.h"
 
 using std::string,std::cout,std::cin,std::endl;
@@ -36,8 +36,6 @@ void addProblemFile(string name,string tag , time_t savedTime){
     }
 }
 
-
-
 void ramLogChecker(){
     if(head == NULL){
         std::cout<<"Log is empty"<<std::endl;
@@ -46,12 +44,11 @@ void ramLogChecker(){
     Node* temp = head; 
     while(temp != NULL){
         
-        std::cout<<temp->problem<<"-"<<temp->difficulty<<" | Added on = "<<dateConverter(temp->date)<<"\n";
+        std::cout<<temp->problem<<" - "<<temp->difficulty<<" | Added on = "<<dateConverter(temp->date)<<"\n";
         temp = temp->next;
     }
     std::cout<<"log ended"<<std::endl;
 }
-
 
 void undoLast(){
     if(head == NULL){
@@ -71,7 +68,6 @@ void undoLast(){
     return;
 }
 
-
 void fileSaver(){
     std::ofstream out("files.txt");
     
@@ -80,6 +76,7 @@ void fileSaver(){
         return;
     }
     Node* temp = head;
+    
     while(temp != NULL){
         out<<temp->problem<<"-"<<temp->difficulty<< "|" << temp->date<<endl;
         temp= temp->next;
@@ -88,7 +85,6 @@ void fileSaver(){
     return;
 }
 
-
 void addProblemHelperFunction(){
     string problem,tag;
     cout<<"Enter the Problem name"<<endl;
@@ -96,12 +92,11 @@ void addProblemHelperFunction(){
     std::getline(cin,problem);
     cout<<"Enter the difficulty"<<endl;
     std::getline(cin,tag);
+    tag = toLowerCase(tag);
 
     addProblem(problem,tag);
     cout<<"problem added"<<endl;
 }
-
-
 
 void welcomeMenu(){
     int choice;
@@ -243,11 +238,11 @@ void showStatus(){
     Node* temp = head; 
     while(temp != NULL){
         string lowerDifficulty = toLowerCase(temp->difficulty);
-        if(lowerDifficulty == "easy"){
+        if(lowerDifficulty.find("easy") == 0){
             countEasy++;
-        }else if(lowerDifficulty == "medium"){
+        }else if(lowerDifficulty.find("medium") == 0){
             countMedium++;
-        }else if(lowerDifficulty == "hard"){
+        }else if(lowerDifficulty.find("hard") == 0){
             countHard++;
         }
         temp = temp->next;
@@ -276,6 +271,7 @@ void searchProblemHelper(){
 
 string toLowerCase(string s){
     std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return std::tolower(c);});
+    s.erase(std::find_if(s.rbegin() , s.rend() ,[](unsigned char ch){return !std::isspace(ch);}).base() , s.end());
     return s;
 }
 
@@ -371,53 +367,69 @@ void deleteHelper(){
 }
 
 void updateProblem(string query){
-    Node* temp = head;
-    std::vector<Node*> m;
-    string lowerQuery = toLowerCase(query);
-    int i =0;
-    while(temp != NULL){
-        string lowerTempProblem = toLowerCase(temp->problem);
-        if(lowerTempProblem.find(lowerQuery) != string::npos){
-            m.push_back(temp);
-            cout<<i<<". "<<temp->problem<<"-"<<temp->difficulty<<endl;
-            i++;
-        }
-        temp = temp->next;
-    }
-    Node* target = head;
-    if(i==0){
+    std::vector<Node*> matches = getMatches(query);
+    if(matches.empty()){
         cout<<"no problem found"<<endl;
         return;
     }
-    if(i==1){
-        target = m[0];
-    }else{
-        cout<<"enter the number of problem to update"<<endl;
-        int c;
-        cin>>c;
-        target = m[c];
+    cout<<"Choose which one to upadate\n";
+    for(int i= 0 ; i<matches.size() ; i++){
+        cout<<i<<". "<<matches[i] ->problem<<" - "<< matches[i] ->difficulty<<endl;
     }
-
+    int c;
+    cin>>c;
+    cin.ignore();
+    Node* target = head;
+    target = matches[c];
     cout<<"what do you want to update"<<endl;
-    cout<<"1.problem"<<endl;
-    cout<<"2.difficulty"<<endl;
-    int d;
-    cin>>d;
-    string a;
-    if(d==1){
-        cout<<"enter the updated problem"<<endl;
-        cin.ignore();
-        std::getline(cin,a);
-        target->problem = a;
-    }else if(d==2){
-        cout<<"enter the updated difficulty"<<endl;
-        cin.ignore();
-        std::getline(cin,a);
-        target->difficulty = a;
+    cout<<"1.problem\n";
+    cout<<"2.Difficulty\n";
+    cout<<"3.Both\n";
+    int choice;
+    cin>>choice;
+    cin.ignore();
+    if(c<0 || c>=matches.size()){
+        std::cerr<<"Invalid choice\n";
+        return;
     }
-
+    string problemName ="";
+    string problemDIfficulty = "";
+    if(choice == 1 || choice == 3){
+        cout<<"Enter problem name\n";
+        std::getline(cin, problemName);
+    }
+    if(choice == 2 || choice == 3){
+        cout<<"Enter difficulty name\n";
+        std::getline(cin, problemDIfficulty);
+    }
+    updateNode(target , problemName , problemDIfficulty);
     fileSaver();
+    return;
 
+}
+
+std::vector<Node*> getMatches(string p){
+    std::vector<Node*> ans;
+    Node* temp = head;
+    string lowerp = toLowerCase(p);
+    while(temp != NULL){
+        string lowerTemporaryProblem = toLowerCase(temp->problem);
+        if(lowerTemporaryProblem.find(lowerp) != string::npos){
+            ans.push_back(temp);
+        }
+        temp = temp->next;
+    }
+    return ans;
+}
+
+void updateNode(Node* target , string problem , string difficulty){
+    if(problem != ""){
+        target->problem = problem;
+    }
+    if(difficulty != ""){
+        target->difficulty = difficulty;
+    }
+    return;
 }
 
 int getProblemDifficultyWeight(string diff){

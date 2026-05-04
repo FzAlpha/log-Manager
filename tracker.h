@@ -2,6 +2,7 @@
 #define tracker_h
 #include<string>
 #include<ctime>
+#include<vector>
 
 //STRUCTURE OF THER NODE//
 struct Node{
@@ -37,7 +38,9 @@ void searchProblemHelper();//for searching a problem
 /*FOR CUSTOM HELP*/
 std::string toLowerCase(std::string s);//converts a given function to lowercase
 int getProblemDifficultyWeight(std::string diff);//gives weight based on difficulty
-std::string dateConverter(time_t date);
+std::string dateConverter(time_t date);//for convertimg long long time interger to readable format
+std::vector<Node*> getMatches(std::string p);//returns a vector of same problem from the list
+void updateNode(Node* target , std::string problem , std::string difficulty);//renames the problem and difficulty the given target node
 
 //MAIN FUNCTIONS//
 
