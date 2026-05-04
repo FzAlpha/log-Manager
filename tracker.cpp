@@ -13,7 +13,7 @@ using std::string,std::cout,std::cin,std::endl;
 
 Node* head = nullptr;
 Node* tail = nullptr;
-//Adding problems
+
 void addProblem(string name,string tag){
     Node* newNode = new Node(name,tag);
     if(head == NULL){
@@ -37,7 +37,7 @@ void addProblemFile(string name,string tag , time_t savedTime){
 }
 
 
-//prints the linked list
+
 void ramLogChecker(){
     if(head == NULL){
         std::cout<<"Log is empty"<<std::endl;
@@ -45,16 +45,14 @@ void ramLogChecker(){
     }
     Node* temp = head; 
     while(temp != NULL){
-        struct tm* timeinfo = std::localtime(&temp->date);
-        char datebuffer[26];
-        std::strftime(datebuffer , sizeof(datebuffer) , "%b %d %H:%M" , timeinfo);
-        std::cout<<temp->problem<<"-"<<temp->difficulty<<" | Added on = "<<datebuffer<<"\n";
+        
+        std::cout<<temp->problem<<"-"<<temp->difficulty<<" | Added on = "<<dateConverter(temp->date)<<"\n";
         temp = temp->next;
     }
     std::cout<<"log ended"<<std::endl;
 }
 
-//deletes last node of linked list
+
 void undoLast(){
     if(head == NULL){
         std::cout<<"Log is empty.Enter something"<<std::endl;
@@ -73,7 +71,7 @@ void undoLast(){
     return;
 }
 
-//saves the files
+
 void fileSaver(){
     std::ofstream out("files.txt");
     
@@ -90,7 +88,7 @@ void fileSaver(){
     return;
 }
 
-//helper functions for addproblem
+
 void addProblemHelperFunction(){
     string problem,tag;
     cout<<"Enter the Problem name"<<endl;
@@ -104,7 +102,7 @@ void addProblemHelperFunction(){
 }
 
 
-//display menu
+
 void welcomeMenu(){
     int choice;
     do{
@@ -176,7 +174,7 @@ void welcomeMenu(){
     }while(choice != 5);
 }
 
-//displays the content of the file
+
 void displayFromFile(){
     std::ifstream in("files.txt");
     if (!in.is_open()) {
@@ -193,20 +191,13 @@ void displayFromFile(){
            
             time_t pTime = std::stoll(line.substr(pos1+1));
             
-            
-            std::tm *ltm = std::localtime(&pTime);
-            std::string dateStr = std::to_string(ltm->tm_mday) + "/" + 
-                                  std::to_string(1 + ltm->tm_mon) + "/" + 
-                                  std::to_string(1900 + ltm->tm_year);
-            
-            
-            std::cout << problemData << " | Added on: " << dateStr << std::endl;
+            std::cout << problemData << " | Added on: " << dateConverter(pTime) << std::endl;
         }
     }
     in.close();
 }
 
-//loads the files contents and breaks them and adds to the linked list 
+
 void loadFromFile(){
     std::ifstream in("files.txt");
 
@@ -229,7 +220,7 @@ void loadFromFile(){
     in.close();
 }
 
-//helper function for log checker
+
 void logCheckerHelperFunction(){
     cout<<"dou You want to see the unsaved version or saved version(Not Applicable if already saved)"<<endl;
     cout<<"1.saved version"<<endl;
@@ -296,10 +287,7 @@ void searchProblem(string query){
         string lowerTempProblem = toLowerCase(temp->problem);
         string lowerTempDiff = toLowerCase(temp->difficulty);
         if((lowerTempProblem.find(lowerQuery) != string::npos) || (lowerTempDiff.find(lowerQuery) != string::npos)){
-            struct tm* timeinfo = std::localtime(&temp->date);
-            char datebuffer[26];
-            std::strftime(datebuffer , sizeof(datebuffer) , "%b %d %H:%M" , timeinfo);
-            cout<<temp->problem<<"-"<<temp->difficulty<<"| Added on ="<<datebuffer<<endl;
+            cout<<temp->problem<<"-"<<temp->difficulty<<"| Added on ="<<dateConverter(temp->date)<<endl;
             isPresent = true;
         }
         temp = temp->next;
@@ -443,7 +431,7 @@ int getProblemDifficultyWeight(string diff){
     }
     return -1;
 }
-//Merge sorting algorithms
+
 Node* sortProblems(Node* head){
     if(!head || !head->next){
         return head;
@@ -489,4 +477,10 @@ Node* merge(Node* first, Node* second){
 }
 
 
+string dateConverter(time_t date){
+    struct tm* timeinfo = std::localtime(&date);
+    char dateBuffer[26];
+    std::strftime(dateBuffer , sizeof(dateBuffer) , "%b %d %H:%M" , timeinfo);
+    return dateBuffer; 
+}
 

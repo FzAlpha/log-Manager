@@ -3,28 +3,7 @@
 #include<string>
 #include<ctime>
 
-
-void addProblem(std::string name,std::string tag);
-void ramLogChecker();
-void undoLast();
-void fileSaver();
-void addProblemHelperFunction();
-void welcomeMenu();
-void displayFromFile();
-void loadFromFile();
-void logCheckerHelperFunction();
-void searchProblem(std::string query);
-void showStatus();
-std::string toLowerCase(std::string s);
-void searchProblemHelper();
-void customDelete(std::string query);
-void deleteHelper();
-void updateProblem(std::string query);
-int getProblemDifficultyWeight(std::string diff);
-void addProblemFile(std::string name,std::string tag , time_t savedTime);
-
-
-
+//STRUCTURE OF THER NODE//
 struct Node{
     std::string problem;
     std::string difficulty;
@@ -45,10 +24,41 @@ struct Node{
         this->next =this-> prev = nullptr;
     }
 };
-
 extern Node* head;
 extern Node* tail;
+
+//HELPER FUNCTIONS//
+/*FOR CLI*/
+void addProblemHelperFunction();//for adding problem
+void logCheckerHelperFunction();//for checking the logs from the files
+void deleteHelper();//for deleting a node
+void searchProblemHelper();//for searching a problem
+
+/*FOR CUSTOM HELP*/
+std::string toLowerCase(std::string s);//converts a given function to lowercase
+int getProblemDifficultyWeight(std::string diff);//gives weight based on difficulty
+std::string dateConverter(time_t date);
+
+//MAIN FUNCTIONS//
+
+void addProblem(std::string name,std::string tag);//adds problem to the linked list
+void ramLogChecker();//checks the linked list and prints its elements
+void undoLast();//deletes the last elements of the lnked list
+void fileSaver();//saves the linked list to the file
+void displayFromFile();//prints the lines from the files
+void loadFromFile();//** an important function** loads the lines to linked list before the program starts
+void searchProblem(std::string query);//searches a users query
+void showStatus();//countd the number of problem a user has done
+void customDelete(std::string query);//for deleteing a selecteed node from the list
+void updateProblem(std::string query);//for updating a problem
+void addProblemFile(std::string name,std::string tag , time_t savedTime);//adds problem from the file
+
+
+//MERGE SORTING//
 Node* sortProblems(Node* head);
 Node* split(Node* head);
 Node* merge(Node* first, Node* second);
+
+//CLI INTERFACE//
+void welcomeMenu();//cli interface
 #endif
