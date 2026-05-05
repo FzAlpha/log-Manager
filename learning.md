@@ -98,7 +98,7 @@ Built an $O(N \log N)$ Merge Sort algorithm custom-designed for Doubly Linked Li
 * **The "Undeclared Type" Header Trap:** Learned that the C++ compiler reads files top-to-bottom. If a function returns a `Node*`, the compiler must see the definition of `Node` earlier in the same header file.
 * **Mastering Pointers:** Solidified the mental model of recursive DLL pointer manipulation—the ultimate test of avoiding Segmentation Faults and infinite loops.
 
-## Date: 3 May 2026
+# Date: 3 May 2026
 **Project:** Log Manager (DSA Tracker)
 **Phase:** 3 - Persistence, Time-Stamping & System Integration
 
@@ -131,3 +131,33 @@ Built an $O(N \log N)$ Merge Sort algorithm custom-designed for Doubly Linked Li
 ### 6. Linked List Edge Cases (Circular Lists & Lost Tails)
 * **Circular Bug:** Realized that `tail->next = head` accidentally creates a Circular Linked List, causing infinite loops during display/traversal. Fixed by ensuring `tail->next` points to the `newNode`.
 * **The Lost Tail:** Learned that after running complex algorithms like Merge Sort, the `tail` pointer must be manually re-traversed and reassigned, otherwise subsequent appends will corrupt the list structure.
+
+
+---
+
+#  Date: 4 May 2026
+**Project:** Log Manager
+**Phase:** 4 - Refactoring & System Architecture
+
+
+### 1. The DRY Principle (Don't Repeat Yourself)
+* **Concept:** Identified duplicated code blocks handling Unix timestamp conversions across three different functions.
+* **Solution:** Extracted the logic into a single, reusable helper function `dateConverter(time_t)`. This reduced code bloat and created a single source of truth for date formatting.
+
+### 2. Separation of Concerns (The "Waiter & Chef" Model)
+* **Concept:** A robust system should never mix User Interface (UI) logic with Core Engine data manipulation.
+* **Refactoring:** Split massive functions (like `updateProblem`) into two distinct layers:
+  * **The UI Layer (Waiter):** Handles all `cin` and `cout` operations, gathering input from the terminal.
+  * **The Core Logic (Chef):** Pure C++ pointer manipulation that only accepts raw data and executes the update, completely ignorant of the terminal.
+
+### 3. Data Sanitization ("Clean at the Gate")
+* **The Flaw:** Delaying data formatting (like converting difficulties to lowercase) until the file-saving or sorting phase leads to inconsistent RAM states and potential segmentation faults.
+* **The Fix:** Implemented a data filter directly at the input stage. By running `toLowerCase()` immediately after `getline()`, the system guarantees that only 100% clean, standardized data enters the Doubly Linked List and local storage files.
+
+### 4. File I/O Bug: The Missing Output Stream
+* **Issue:** The `fileSaver()` function was clearing `files.txt` but saving zero bytes of data.
+* **Root Cause:** Accidentally used `std::cout` instead of the instantiated `std::ofstream out` object within the while loop, which blasted the data to the terminal instead of writing it to the disk.
+* **Takeaway:** Always double-check stream targets when working with `<fstream>`.
+*
+
+---
